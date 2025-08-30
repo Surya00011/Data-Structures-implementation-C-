@@ -45,17 +45,11 @@ public:
 
     void add(T element)
     {
-        if (isEmpty())
-        {
-            addFirst(element);
-        }
+        if (isEmpty()) addFirst(element);
         else
         {
             Node<T> *temp = head;
-            while (temp->next != nullptr)
-            {
-                temp = temp->next;
-            }
+            while (temp->next != nullptr) temp = temp->next;
             temp->next = new Node<T>(element);
             size++;
         }
@@ -63,10 +57,7 @@ public:
 
     T removeFirst()
     {
-        if (isEmpty())
-        {
-            throw "List is empty";
-        }
+        if (isEmpty()) throw "List is empty";
         Node<T> *temp = head;
         T removedElement = head->element;
         head = head->next;
@@ -89,8 +80,37 @@ public:
         }
         std::cout << "->nullptr\n";
     }
+    
+    friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list) {
+        Node<T>* temp = list.head;
+        while (temp != nullptr) {
+            os << temp->element;
+            if (temp->next != nullptr) {
+                os << "->";
+            }
+            temp = temp->next;
+        }
+        os << "->nullptr";
+        return os;
+    }
 
-    T getFirst() const
+    void addAtIndex(int index,T element)
+	{
+	    if(index<0 || index>size-1) throw std::invalid_argument("Index out of Range");
+	    if(index==0) {addFirst(element);}
+	    else{
+	        Node<T>* prevNode = head;
+	        for(int i=0;i<index-1;i++){
+	            prevNode=prevNode->next;
+	        }
+	        Node<T>* newNode = new Node(element);
+	        newNode->next = prevNode->next;
+	        prevNode->next=newNode;
+	        size++;
+	    }
+	}
+
+    const T& getFirst() const
     {
         if (isEmpty()) throw "List is empty";
         return head->element;
@@ -103,36 +123,28 @@ public:
 
     void clear()
     {
-        while (!isEmpty())
-        {
-            removeFirst();
-        }
+        while (!isEmpty()) removeFirst();
     }
 
-    T getLast() const
+    const T& getLast() const
     {
         if (isEmpty()) throw "List is empty";
         Node<T> *temp = head;
-        while (temp->next != nullptr)
-        {
-            temp = temp->next;
-        }
+        while (temp->next != nullptr) temp = temp->next;
         return temp->element;
     }
 
-    T get(int index) const
+    const T& get(int index) const
     {
-        if (index < 0 || index >= size) throw "Index out of bounds";
+        if (index < 0 || index >= size) throw std::invalid_argument("Index out of Range");
         Node<T> *temp = head;
-        for (int i = 0; i < index; i++)
-        {
-            temp = temp->next;
-        }
+        for (int i = 0; i < index; i++) temp = temp->next;
         return temp->element;
     }
 
     T removeAtIndex(int index) {
 		T removedElement;
+        if(index<0 || index>=size) throw std::invalid_argument("Index out of Range");
 		if(isEmpty()) throw "List is empty";
 		if(size==1) {
 			return removeFirst();
@@ -149,6 +161,51 @@ public:
 			return removedElement;
 		}
 	}
+    T removeByValue(const T& element)
+	{
+		if (isEmpty())
+			throw std::runtime_error("List is empty");
+
+		if (head->element == element) {
+			return removeFirst();
+		}
+
+		Node<T> *prevNode = head;
+		while (prevNode->next != nullptr && prevNode->next->element != element) {
+			prevNode = prevNode->next;
+		}
+		if (prevNode->next == nullptr) {
+			throw std::invalid_argument("Element not found in list");
+		}
+
+		Node<T> *deletedNode = prevNode->next;
+		T removedElement = deletedNode->element;
+		prevNode->next = deletedNode->next;
+		delete deletedNode;
+		size--;
+		return removedElement;
+	}
+    
+    int indexOf(const T& element) const
+	{
+		Node<T>* current = head;
+		int index = 0;
+
+		while (current != nullptr) {
+			if (current->element == element) {
+				return index;  
+			}
+			current = current->next;
+			index++;
+		}
+
+		return -1; 
+	}
+
+    bool contains(const T& element) const
+    {
+        return indexOf(element) != -1;
+    }
 };
 
 #endif
