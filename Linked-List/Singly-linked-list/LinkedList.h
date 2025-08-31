@@ -81,6 +81,18 @@ public:
         std::cout << "->nullptr\n";
     }
     
+    void reverse(){
+        Node<T>* prevNode = nullptr;
+        Node<T>* currentNode = head;
+        while(currentNode != nullptr){
+            Node<T>* oldCurrent = currentNode->next;
+            currentNode->next = prevNode;
+            prevNode = currentNode;
+            currentNode = oldCurrent;
+        }
+        head = prevNode;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list) {
         Node<T>* temp = list.head;
         while (temp != nullptr) {
