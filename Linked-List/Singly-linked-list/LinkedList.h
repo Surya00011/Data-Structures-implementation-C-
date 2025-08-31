@@ -82,6 +82,7 @@ public:
     }
     
     void reverse(){
+        if(isEmpty()) throw "List is empty";
         Node<T>* prevNode = nullptr;
         Node<T>* currentNode = head;
         while(currentNode != nullptr){
